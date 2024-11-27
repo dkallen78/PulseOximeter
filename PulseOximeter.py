@@ -11,8 +11,6 @@ def main():
     
     OledI2C = I2C(0, scl = Pin(9), sda = Pin(8), freq = 200000)
     OledDisp = SSD1306_I2C(WIDTH, HEIGHT, OledI2C)
-    OledDisp.fill(1)
-
     OledDisp.fill(0)
     
     # I2C software instance
@@ -111,6 +109,12 @@ def main():
                 irLow = 100000
                 redHigh = 0
                 redLow = 100000
+                
+                #output bpm and SP02 to the Oled display
+                OledDisp.fill(0)
+                output = "BPM: " + str(bpm) + " | SP02: " + str(spO2local)
+                OledDisp.text(output, 0, 40)
+                OledDisp.show()
                 
             #if were not looking for a beat check if we should be looking for a beat
             elif avgChng > 0.5 and not lookpeak:
