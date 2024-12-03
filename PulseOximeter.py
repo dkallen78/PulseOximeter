@@ -112,8 +112,10 @@ def main():
                 
                 #output bpm and SP02 to the Oled display
                 OledDisp.fill(0)
-                output = "BPM: " + str(bpm) + " | SP02: " + str(spO2local)
-                OledDisp.text(output, 0, 40)
+                bpmOutput = "BPM: " + str(round(bpm))
+                spo2Output = "SpO2: " + str(round(spO2local, 2)) + "%"
+                OledDisp.text(bpmOutput, 0, 0)
+                OledDisp.text(spo2Output, 0, 40)
                 OledDisp.show()
                 
             #if were not looking for a beat check if we should be looking for a beat
