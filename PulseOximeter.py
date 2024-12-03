@@ -2,7 +2,7 @@ from machine import SoftI2C, Pin, I2C
 import time
 from max30102 import MAX30102, MAX30105_PULSE_AMP_MEDIUM
 import math
-from ssd1306 import SSD1306_I2C 
+from ssd1306 import SSD1306_I2C
 
 def main():
     #oled display setup
@@ -92,7 +92,7 @@ def main():
                 
                 #print average of the last ten bpm eliminate the high and low values
                 bpm = ((sum(bpmStor) - (max(bpmStor) + min(bpmStor))) / (len(bpmStor) - 2))
-                print("bpm", bpm)
+                print("bpm", round(bpm))
                 PR = bpm
                 lookpeak = False
                 
@@ -102,7 +102,7 @@ def main():
                 spO2Stor.append(calculate_spO2(redHigh, redLow, irHigh, irLow))
                 #average the array of stored spO2 values but remove max and min values (possible outliers)
                 spO2local = ((sum(spO2Stor) - (max(spO2Stor) + min(spO2Stor))) / (len(spO2Stor) - 2))
-                print("spO2", spO2local)
+                print("spO2", round(spO2local, 2))
                 SPO2 = spO2local
                 #reset vals for next beat
                 irHigh = 0
@@ -132,11 +132,20 @@ def main():
             if (red_reading < redLow):
                 redLow = red_reading
 
-def calculate_spO2(redmax, redmin, irmax, irmin):
-    RvalNumerator = (redmax - redmin) / redmin
-    RvalDenominator = (irmax - irmin) / irmin
-    Rval = RvalNumerator / RvalDenominator
-    spO2 = 110 - (25 * Rval)
+def calculate_spO2(red_max, red_min, ir_max, ir_min):
+    red_DC = (red_max + red_min) / 2
+    red_AC = red_max - red_min
+    
+    ir_DC = (ir_max + ir_min) / 2
+    ir_AC = ir_max - ir_min
+    
+    R_val = (red_AC / red_DC) / (ir_AC / ir_DC)
+    print(R_val)
+    
+    #spO2 = R_val * 0.4948
+    spO2 = 116.6 - (34.5 * R_val)
+    #spO2 = 110 - (25 * R_val)
+    #spO2 = (1.5958422 * (R_val * R_val)) + (-34.6596622 * R_val) + 112.6898759
     return spO2
 
 main()
