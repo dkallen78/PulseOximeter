@@ -9,12 +9,12 @@ def main():
     WIDTH = 128
     HEIGHT = 64
     
-    OledI2C = I2C(0, scl = Pin(9), sda = Pin(8), freq = 200000)
+    OledI2C = SoftI2C(sda = Pin(8), scl = Pin(9), freq = 200000)
     OledDisp = SSD1306_I2C(WIDTH, HEIGHT, OledI2C)
     OledDisp.fill(0)
     
     # I2C software instance
-    i2c = SoftI2C(sda=Pin(14), scl=Pin(15), freq=400000)
+    i2c = SoftI2C(sda = Pin(8), scl = Pin(9), freq=400000)
 
     # Sensor instance
     sensor = MAX30102(i2c=i2c)
@@ -140,10 +140,10 @@ def calculate_spO2(red_max, red_min, ir_max, ir_min):
     ir_AC = ir_max - ir_min
     
     R_val = (red_AC / red_DC) / (ir_AC / ir_DC)
-    print(R_val)
+    print("R:", R_val)
     
-    #spO2 = R_val * 0.4948
-    spO2 = 116.6 - (34.5 * R_val)
+    spO2 = R_val * 49.48
+    #spO2 = 116.6 - (34.5 * R_val)
     #spO2 = 110 - (25 * R_val)
     #spO2 = (1.5958422 * (R_val * R_val)) + (-34.6596622 * R_val) + 112.6898759
     return spO2
